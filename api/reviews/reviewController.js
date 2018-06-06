@@ -1,0 +1,107 @@
+var Review = require('./reviewModel');
+var User = require('../users/userModel');
+var _ = require('lodash');
+
+exports.params = function (req, res, next, id) {
+    Review.findById(id).
+        populate('user')
+        .then(function (review) {
+            if (!review) {
+                next(new Error('No review with that id'));
+            } else {
+                req.reviewData = review;
+                next();
+            }
+        }, function (err) {
+            next(err);
+        });
+};
+
+exports.get = function (req, res, next) {
+    Review.find({}).
+        populate('user site')
+        .then(function (reviews) {
+            res.json(reviews);
+        }, function (err) {
+            next(err);
+        });
+};
+
+exports.getOne = function (req, res, next) {
+    var review = req.reviewData;
+    res.json(review);
+};
+
+exports.post = function (req, res, next) {
+    var newReview = req.body;
+    var userID = req.user._id;
+    newReview.user = userID;
+    var dummyInovicePoints = Math.floor((Math.floor(Math.random() * 1001) + 1) * 0.25);
+    var newPoints;
+    var siteIsFounded = false;
+    console.log("current user id", userID);
+    User.findById(userID)
+        .select({ "points": 1, "_id": 0 })
+        .exec(function (err, result) {
+            if (err) {
+                next(err);
+            } else {
+                for (var i = 0; i < result.points.length; i++) {
+                    if (result.points[i].siteName === newReview.site) {
+                        siteIsFounded = true;
+                        console.log("current points is "
+                            + String(result.points[i].sitePoints)
+                            + " for site " + String(result.points[i].siteName));
+
+                        newPoints = result.points[i].sitePoints + dummyInovicePoints;
+                        User.updateOne({ _id: userID, "points.siteName": newReview.site }, {
+                            $set: { "points.$.sitePoints": newPoints }
+                        }, function (err, queryResponse) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log("update exist points", queryResponse);
+                            }
+                        });
+                    }
+                }
+                if (!siteIsFounded) {
+                    User.update(
+                        { _id: userID },
+                        {
+                            $push: {
+                                "points": {
+                                    siteName: newReview.site,
+                                    sitePoints: dummyInovicePoints
+                                }
+                            }
+                        },
+                        function (err, updateResult) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log("insert new points", updateResult);
+                            }
+                        });
+                }
+            }
+        });
+
+    console.log("review :", newReview);
+    Review.create(newReview)
+        .then(function (review) {
+            res.json(review);
+        }, function (err) {
+            next(err);
+        });
+};
+
+exports.delete = function (req, res, next) {
+    req.reviewData.remove(function (err, removed) {
+        if (err) {
+            next(err);
+        } else {
+            res.json(removed);
+        }
+    });
+};
