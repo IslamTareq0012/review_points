@@ -8,6 +8,9 @@ router.route('/')
     .get(controller.get)
     .post(expressJwt({secret: process.env.SECRET}),controller.post)
 
+router.route('/ranking')
+        .get(controller.ranking)
+
 router.route('/:id')
     .get(controller.getOne)
     .delete(expressJwt({secret: process.env.SECRET}),controller.delete)

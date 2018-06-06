@@ -19,7 +19,7 @@ exports.params = function (req, res, next, id) {
 
 exports.get = function (req, res, next) {
     Review.find({}).
-        populate('user site')
+        populate('user')
         .then(function (reviews) {
             res.json(reviews);
         }, function (err) {
@@ -104,4 +104,15 @@ exports.delete = function (req, res, next) {
             res.json(removed);
         }
     });
+};
+
+exports.ranking = function (req, res, next) {
+    Review.find({sentiment : {$gte:0.2 }}).
+        populate('user')
+        .sort({sentiment:-1})
+        .then(function (reviews) {
+            res.json(reviews);
+        }, function (err) {
+            next(err);
+        });
 };
