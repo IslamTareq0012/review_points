@@ -107,12 +107,36 @@ exports.delete = function (req, res, next) {
 };
 
 exports.ranking = function (req, res, next) {
-    Review.find({sentiment : {$gte:0.2 }}).
-        populate('user')
-        .sort({sentiment:-1})
-        .then(function (reviews) {
-            res.json(reviews);
-        }, function (err) {
-            next(err);
-        });
+    
+    Review.aggregate([
+        {
+            $project: {
+                site: 1,
+                moreThan10: {  // Set to 1 if value > 10
+                    $cond: [ { $gt: [ "$sentiment", 0.2 ] }, 1, 0]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$site",
+                postiveReview: { $sum: "$moreThan10" }
+            }
+        }
+    ]).then(res => {console.log(res)})
+    
+    // Review.find({sentiment : {$gte:0.2 }})
+    //     .sort({sentiment:-1})
+    //     .then(function (reviews) {
+    //         res.json(reviews);
+    //         for(i=0;i<reviews.length;i++){
+    //             console.log(reviews[i].site)
+    //         }
+    //         var responsJson = {
+    //             siteName:reviews[0].site,
+    //             postive:reviews.length
+    //         }
+    //        }, function (err) {
+    //         next(err);
+    //     });
 };
