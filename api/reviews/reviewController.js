@@ -105,3 +105,32 @@ exports.delete = function (req, res, next) {
         }
     });
 };
+
+
+exports.search = function (req, res, next) {
+    var fiteredKeywords = _.pickBy(req.body, _.identity)
+    console.log("filterd search", fiteredKeywords);
+    console.log("search keys", req.body);
+    Review.find(fiteredKeywords).
+        populate('user', '-resetPasswordToken -resetPasswordExpires -_id -notificationToken -email -password -__v -points')
+        .select({ "invoiceID": 0, "sentiment": 0, "_id": 0 })
+        .then(function (reviews) {
+            res.json(reviews);
+        }, function (err) {
+            next(err);
+        });
+};
+
+exports.ranking = function (req, res, next) {
+    Review.aggregate([
+        {
+            $group: {
+                siteName: $siteName
+            }
+        }
+    ]).then(function (result) {
+        console.log("Result is : ", result)
+    }, function (err) {
+        console.log("The errorr : ", err);
+    });
+}
