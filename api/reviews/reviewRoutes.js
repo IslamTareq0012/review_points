@@ -18,7 +18,4 @@ router.route('/:id')
     .get(controller.getOne)
     .delete(expressJwt({secret: process.env.SECRET}),controller.delete)
 
-router.route('/ranking')
-        .get(controller.ranking);
-
 module.exports = router;
