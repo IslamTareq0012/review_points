@@ -19,7 +19,7 @@ exports.params = function (req, res, next, id) {
 
 exports.get = function (req, res, next) {
     Review.find({}).
-        populate('user site')
+        populate('user')
         .then(function (reviews) {
             res.json(reviews);
         }, function (err) {
@@ -106,6 +106,7 @@ exports.delete = function (req, res, next) {
     });
 };
 
+<<<<<<< HEAD
 
 exports.search = function (req, res, next) {
     var fiteredKeywords = _.pickBy(req.body, _.identity)
@@ -134,3 +135,39 @@ exports.ranking = function (req, res, next) {
         console.log("The errorr : ", err);
     });
 }
+=======
+exports.ranking = function (req, res, next) {
+    
+    Review.aggregate([
+        {
+            $project: {
+                site: 1,
+                moreThan10: {  // Set to 1 if value > 10
+                    $cond: [ { $gt: [ "$sentiment", 0.2 ] }, 1, 0]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$site",
+                postiveReview: { $sum: "$moreThan10" }
+            }
+        }
+    ]).then(res => {console.log(res)})
+    
+    // Review.find({sentiment : {$gte:0.2 }})
+    //     .sort({sentiment:-1})
+    //     .then(function (reviews) {
+    //         res.json(reviews);
+    //         for(i=0;i<reviews.length;i++){
+    //             console.log(reviews[i].site)
+    //         }
+    //         var responsJson = {
+    //             siteName:reviews[0].site,
+    //             postive:reviews.length
+    //         }
+    //        }, function (err) {
+    //         next(err);
+    //     });
+};
+>>>>>>> 50839e526382a1ccd38104871ba30be11a0ca358
