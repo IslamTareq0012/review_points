@@ -106,8 +106,6 @@ exports.delete = function (req, res, next) {
     });
 };
 
-<<<<<<< HEAD
-
 exports.search = function (req, res, next) {
     var fiteredKeywords = _.pickBy(req.body, _.identity)
     console.log("filterd search", fiteredKeywords);
@@ -123,27 +121,13 @@ exports.search = function (req, res, next) {
 };
 
 exports.ranking = function (req, res, next) {
-    Review.aggregate([
-        {
-            $group: {
-                siteName: $siteName
-            }
-        }
-    ]).then(function (result) {
-        console.log("Result is : ", result)
-    }, function (err) {
-        console.log("The errorr : ", err);
-    });
-}
-=======
-exports.ranking = function (req, res, next) {
-    
+
     Review.aggregate([
         {
             $project: {
                 site: 1,
                 moreThan10: {  // Set to 1 if value > 10
-                    $cond: [ { $gt: [ "$sentiment", 0.2 ] }, 1, 0]
+                    $cond: [{ $gt: ["$sentiment", 0.2] }, 1, 0]
                 }
             }
         },
@@ -153,21 +137,9 @@ exports.ranking = function (req, res, next) {
                 postiveReview: { $sum: "$moreThan10" }
             }
         }
-    ]).then(res => {console.log(res)})
-    
-    // Review.find({sentiment : {$gte:0.2 }})
-    //     .sort({sentiment:-1})
-    //     .then(function (reviews) {
-    //         res.json(reviews);
-    //         for(i=0;i<reviews.length;i++){
-    //             console.log(reviews[i].site)
-    //         }
-    //         var responsJson = {
-    //             siteName:reviews[0].site,
-    //             postive:reviews.length
-    //         }
-    //        }, function (err) {
-    //         next(err);
-    //     });
+    ]).then(function (reviews) {
+        res.json(reviews);
+    }, function (err) {
+        next(err);
+    });
 };
->>>>>>> 50839e526382a1ccd38104871ba30be11a0ca358
