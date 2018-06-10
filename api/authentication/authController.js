@@ -43,6 +43,7 @@ exports.adminSignup = function (req, res, next) {
         Site.create(newSite).then(function (site) {
             jwtPayload = {
                 _id: site._id,
+                siteName: site.siteName,
                 adminEmail: site.admin.email,
             }
             const token = jwt.sign({ siteData: jwtPayload }, process.env.SECRET);
@@ -67,6 +68,7 @@ exports.adminLogin = function (req, res, next) {
                     console.log("is matched", isMatch);
                     jwtPayload = {
                         _id: site._id,
+                        siteName: site.siteName,
                         adminEmail: site.admin.email,
                     }
                     const token = jwt.sign({ siteData: jwtPayload }, process.env.SECRET);
