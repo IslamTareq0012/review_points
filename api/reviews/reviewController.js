@@ -114,13 +114,18 @@ exports.ranking = function (req, res, next) {
                 site: 1,
                 moreThan10: {  // Set to 1 if value > 10
                     $cond: [ { $gt: [ "$sentiment", 0.2 ] }, 1, 0]
+                },
+                negativeSentiement :{
+                    $cond: [ { $lt: [ "$sentiment", 0.5 ] }, 1, 0]
                 }
             }
         },
         {
             $group: {
                 _id: "$site",
-                postiveReview: { $sum: "$moreThan10" }
+                category:"$category",
+                postiveReview: { $sum: "$moreThan10" },
+                negativeReview : {$sum: "$negativeSentiement"}
             }
         }
     ]).then(res => {console.log(res)})
