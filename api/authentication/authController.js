@@ -90,6 +90,18 @@ exports.signUp = function (req, res, next) {
     });
     var img = req.body.userImage;
     var imgBase64;
+
+    if(!img) {
+        var newUser = req.body;
+        newUser.userImage ="avatar.png";
+        User.create(newUser)
+            .then(function (user) {
+                const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+                return res.status(201).send({ success: true, user: { _id: user._id, userData: user }, token });
+            }, function (err) {
+                next(err);
+            });
+    }
     if (String(img).includes("image/png;base64,")) {
         imgBase64 = img.split(';base64,').pop();
         fs.writeFile('././images/' + String(req.body.email) + "_image.png", imgBase64, { encoding: 'base64' }, function (err) {
