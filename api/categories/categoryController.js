@@ -19,7 +19,7 @@ exports.params = function (req, res, next, id) {
 
 exports.get = function (req, res, next) {
     Category.find({}).
-        populate('site' , '-_id -__v -admin')
+        populate('site', '-_id -__v -admin')
         .then(function (categories) {
             res.json(categories);
         }, function (err) {
@@ -36,7 +36,7 @@ exports.getOne = function (req, res, next) {
 exports.post = function (req, res, next) {
     console.log("category data :", req.body);
     var newCategory = req.body;
-    var siteID = req.user.siteData._id;
+    var siteID = req.user.siteData.siteName;
     newCategory.site = siteID;
     Category.create(newCategory)
         .then(function (category) {
@@ -54,3 +54,4 @@ exports.delete = function (req, res, next) {
         }
     });
 };
+

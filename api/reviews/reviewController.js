@@ -106,8 +106,22 @@ exports.delete = function (req, res, next) {
     });
 };
 
+exports.search = function (req, res, next) {
+    var fiteredKeywords = _.pickBy(req.body, _.identity)
+    console.log("filterd search", fiteredKeywords);
+    console.log("search keys", req.body);
+    Review.find(fiteredKeywords).
+        populate('user', '-resetPasswordToken -resetPasswordExpires -_id -notificationToken -email -password -__v -points')
+        .select({ "invoiceID": 0, "sentiment": 0, "_id": 0 })
+        .then(function (reviews) {
+            res.json(reviews);
+        }, function (err) {
+            next(err);
+        });
+};
+
 exports.ranking = function (req, res, next) {
-    
+
     Review.aggregate([
         {
             $project: {
@@ -128,20 +142,9 @@ exports.ranking = function (req, res, next) {
                 negativeReview : {$sum: "$negativeSentiement"}
             }
         }
-    ]).then(res => {console.log(res)})
-    
-    // Review.find({sentiment : {$gte:0.2 }})
-    //     .sort({sentiment:-1})
-    //     .then(function (reviews) {
-    //         res.json(reviews);
-    //         for(i=0;i<reviews.length;i++){
-    //             console.log(reviews[i].site)
-    //         }
-    //         var responsJson = {
-    //             siteName:reviews[0].site,
-    //             postive:reviews.length
-    //         }
-    //        }, function (err) {
-    //         next(err);
-    //     });
+    ]).then(function (reviews) {
+        res.json(reviews);
+    }, function (err) {
+        next(err);
+    });
 };
