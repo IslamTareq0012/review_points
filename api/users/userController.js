@@ -1,4 +1,5 @@
 var User = require('./userModel');
+var Review = require('../reviews/reviewModel')
 var _ = require('lodash');
 var fs = require('fs');
 
@@ -31,6 +32,16 @@ exports.getOne = function (req, res, next) {
     var user = req.userData;
     res.json(user);
 };
+
+exports.getUserID = function (req,res,next){
+    console.log("workk",req.userData)
+        Review.find({user:req.userData._id})
+                .then(function(reviews){
+                    res.json(reviews)
+                },function(err){
+                    next(err)
+                });
+}
 
 exports.put = function (req, res, next) {
     var user = req.userData;

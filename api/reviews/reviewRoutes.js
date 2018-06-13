@@ -14,6 +14,9 @@ router.route('/')
 router.route('/ranking')
         .get(controller.ranking)
 
+router.route('/categoryRanking')
+        .get(controller.categoryRanking)        
+
 router.route('/:id')
     .get(controller.getOne)
     .delete(expressJwt({secret: process.env.SECRET}),controller.delete)

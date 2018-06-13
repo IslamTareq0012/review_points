@@ -32,6 +32,10 @@ exports.getOne = function (req, res, next) {
     res.json(review);
 };
 
+exports.getByUserID = function (req,res,next){
+    Review.find({user:req.reviewData})      
+}
+
 exports.post = function (req, res, next) {
     var newReview = req.body;
     var userID = req.user._id;
@@ -126,8 +130,37 @@ exports.ranking = function (req, res, next) {
         {
             $project: {
                 site: 1,
-                moreThan10: {  // Set to 1 if value > 10
-                    $cond: [ { $gt: [ "$sentiment", 0.2 ] }, 1, 0]
+                moreThan10: {  
+                    $cond: [ { $gte: [ "$sentiment", 0 ] }, 1, 0]
+                },
+                negativeSentiement :{
+                    $cond: [ { $lt: [ "$sentiment", 0 ] }, 1, 0]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$site",
+                postiveReview: { $sum: "$moreThan10" },
+                negativeReview : {$sum: "$negativeSentiement"}
+            }
+        }
+    ]).then(function (reviews) {
+        res.json(reviews);
+    }, function (err) {
+        next(err);
+    });
+};
+
+
+exports.categoryRanking = function (req, res, next) {
+
+    Review.aggregate([
+        {
+            $project: {
+                site: 1,category:1,
+                moreThan10: { 
+                    $cond: [ { $gte: [ "$sentiment", 0.5 ] }, 1, 0]
                 },
                 negativeSentiement :{
                     $cond: [ { $lt: [ "$sentiment", 0.5 ] }, 1, 0]
@@ -136,8 +169,10 @@ exports.ranking = function (req, res, next) {
         },
         {
             $group: {
-                _id: "$site",
-                category:"$category",
+                "_id": {
+                    "site": "$site",
+                    "category": "$category"
+                },
                 postiveReview: { $sum: "$moreThan10" },
                 negativeReview : {$sum: "$negativeSentiement"}
             }
