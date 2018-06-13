@@ -17,7 +17,7 @@ var userSchema = new Schema({
     required: true
   },
   userImage: {
-    type: String
+    type: String,
   },
   notificationToken: {
     type: String,
