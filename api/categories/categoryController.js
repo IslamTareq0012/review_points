@@ -36,7 +36,7 @@ exports.getOne = function (req, res, next) {
 exports.post = function (req, res, next) {
     console.log("category data :", req.body);
     var newCategory = req.body;
-    var siteID = req.user.siteData.siteName;
+    var siteID = req.user.siteData._id;
     newCategory.site = siteID;
     Category.create(newCategory)
         .then(function (category) {

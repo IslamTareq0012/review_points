@@ -6,10 +6,7 @@ var CategorySchema = new Schema({
         type: String,
         required: true
     },
-    site: {
-        type: String,
-        required: true
-    }
+    site: { type: Schema.Types.ObjectId, ref: 'site' }
 });
 
 module.exports = mongoose.model('category', CategorySchema);
