@@ -27,13 +27,17 @@ var userSchema = new Schema({
     type: [{ siteName: String, sitePoints: Number }],
     required: true
   },
-  resetPasswordToken:{
+  resetPasswordToken: {
     type: String,
     default: "undefined"
   },
-  resetPasswordExpires:{
+  resetPasswordExpires: {
     type: Number,
     default: 0
+  },
+  dateOfBirth: {
+    type: Date,
+    required: true
   }
 
 });
