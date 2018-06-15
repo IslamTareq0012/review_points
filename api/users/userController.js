@@ -33,14 +33,14 @@ exports.getOne = function (req, res, next) {
     res.json(user);
 };
 
-exports.getUserID = function (req,res,next){
-    console.log("workk",req.userData)
-        Review.find({user:req.userData._id})
-                .then(function(reviews){
-                    res.json(reviews)
-                },function(err){
-                    next(err)
-                });
+exports.getUserID = function (req, res, next) {
+    console.log("workk", req.userData)
+    Review.find({ user: req.userData._id })
+        .then(function (reviews) {
+            res.json(reviews)
+        }, function (err) {
+            next(err)
+        });
 }
 
 exports.put = function (req, res, next) {
@@ -115,3 +115,13 @@ exports.delete = function (req, res, next) {
         }
     });
 };
+
+exports.updateFcmToken = function (req, res, next) {
+    User.update({ _id: req.user._id }, { $set: { notificationToken: req.body.token } }, function (err, updateResult) {
+        if (err) {
+            next(err);
+        } else {
+            res.json({ update: "ok" });
+        }
+    });
+}
