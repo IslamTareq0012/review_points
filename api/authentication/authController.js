@@ -188,7 +188,7 @@ exports.forgotPassword = function (req, res, next) {
         function (token, user, done) {
             var data = {
                 to: user.email,
-                from: email,
+                from: "ReviewPoints <no_reply@reviewpoints.com>",
                 template: 'forgot-password-email',
                 subject: 'Password help has arrived!',
                 context: {
