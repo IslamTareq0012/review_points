@@ -32,8 +32,8 @@ exports.getOne = function (req, res, next) {
     res.json(review);
 };
 
-exports.getByUserID = function (req,res,next){
-    Review.find({user:req.reviewData})      
+exports.getByUserID = function (req, res, next) {
+    Review.find({ user: req.reviewData })
 }
 
 exports.post = function (req, res, next) {
@@ -130,11 +130,11 @@ exports.ranking = function (req, res, next) {
         {
             $project: {
                 site: 1,
-                moreThan10: {  
-                    $cond: [ { $gte: [ "$sentiment", 0.5 ] }, 1, 0]
+                moreThan10: {
+                    $cond: [{ $gte: ["$sentiment", 0.5] }, 1, 0]
                 },
-                negativeSentiement :{
-                    $cond: [ { $lt: [ "$sentiment", 0.5 ] }, 1, 0]
+                negativeSentiement: {
+                    $cond: [{ $lt: ["$sentiment", 0.5] }, 1, 0]
                 }
             }
         },
@@ -142,10 +142,10 @@ exports.ranking = function (req, res, next) {
             $group: {
                 _id: "$site",
                 postiveReview: { $sum: "$moreThan10" },
-                negativeReview : {$sum: "$negativeSentiement"}
+                negativeReview: { $sum: "$negativeSentiement" }
             }
         },
-        {$sort: {postiveReview: -1}}
+        { $sort: { postiveReview: -1 } }
     ]).then(function (reviews) {
         res.json(reviews);
     }, function (err) {
@@ -155,16 +155,20 @@ exports.ranking = function (req, res, next) {
 
 
 exports.categoryRanking = function (req, res, next) {
-
     Review.aggregate([
         {
+            $match: {
+                site: req.user.siteData.siteName
+            }
+        },
+        {
             $project: {
-                site: 1,category:1,
-                moreThan10: { 
-                    $cond: [ { $gte: [ "$sentiment", 0.5 ] }, 1, 0]
+                site: 1, category: 1,
+                moreThan10: {
+                    $cond: [{ $gte: ["$sentiment", 0.5] }, 1, 0]
                 },
-                negativeSentiement :{
-                    $cond: [ { $lt: [ "$sentiment", 0.5 ] }, 1, 0]
+                negativeSentiement: {
+                    $cond: [{ $lt: ["$sentiment", 0.5] }, 1, 0]
                 }
             }
         },
@@ -175,10 +179,10 @@ exports.categoryRanking = function (req, res, next) {
                     "category": "$category"
                 },
                 postiveReview: { $sum: "$moreThan10" },
-                negativeReview : {$sum: "$negativeSentiement"}
+                negativeReview: { $sum: "$negativeSentiement" }
             }
         },
-        {$sort: {postiveReview: -1}}
+        { $sort: { postiveReview: -1 } }
     ]).then(function (reviews) {
         res.json(reviews);
     }, function (err) {
