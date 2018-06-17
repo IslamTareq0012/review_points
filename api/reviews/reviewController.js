@@ -195,15 +195,27 @@ exports.userRanking = function (req, res, next) {
     Review.aggregate([
         {
             $project: {
-                user: 1
+                user: 1,site:1
             }
         },
         {
             $group: {
-                _id: "$user",
+                "_id": {
+                    "site": "$site",
+                    "user": "$user"
+                },
                 numOfReviews: { $sum: 1 },
             }
         },
+        {
+            $lookup:
+              {
+                from: "users",
+                localField: "_id.user",
+                foreignField: "_id",
+                as: "user_data"
+              }
+         },
         { $sort: { numOfReviews: -1 } }
     ]).then(function (reviews) {
         res.json(reviews);
