@@ -32,6 +32,15 @@ exports.getOne = function (req, res, next) {
     res.json(category);
 };
 
+exports.getSiteID = function (req, res, next) {
+    console.log("category data :", req.body.siteID);
+    Category.find({ site: req.body.siteID })
+        .then(function (categories) {
+            res.json(categories)
+        }, function (err) {
+            next(err)
+        });
+    }
 
 exports.post = function (req, res, next) {
     console.log("category data :", req.body);

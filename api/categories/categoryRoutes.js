@@ -9,7 +9,9 @@ router.route('/')
 .post(expressJwt({secret: process.env.SECRET}),controller.post)
 
 router.route('/:id')
-.get(controller.getOne)
+//.get(controller.getOne)
 .delete(expressJwt({secret: process.env.SECRET}),controller.delete)
+
+router.route('/get_categories').post(controller.getSiteID)
 
 module.exports = router;
