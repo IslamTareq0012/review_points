@@ -14,6 +14,9 @@ router.route('/')
 router.route('/ranking')
     .get(controller.ranking)
 
+router.route('/user_ranking')
+    .get(controller.userRanking)
+
 router.route('/categoryRanking')
     .get(expressJwt({ secret: process.env.SECRET }), controller.categoryRanking)
 

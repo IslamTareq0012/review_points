@@ -17,12 +17,22 @@ exports.findSite = function (req, res, next) {
         });
 };
 
+exports.get = function (req, res, next) {
+    Site.find({})
+        .then(function (sites) {
+            res.json(sites);
+        }, function (err) {
+            next(err);
+        });
+};
+
 
 exports.getOne = function (req, res, next) {
     console.log("token :", req.headers.authorization);
     var site = req.siteData;
     res.json(site);
 };
+
 
 exports.delete = function (req, res, next) {
     req.siteData.remove(function (err, removed) {

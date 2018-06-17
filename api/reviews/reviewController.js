@@ -189,3 +189,25 @@ exports.categoryRanking = function (req, res, next) {
         next(err);
     });
 };
+
+exports.userRanking = function (req, res, next) {
+
+    Review.aggregate([
+        {
+            $project: {
+                user: 1
+            }
+        },
+        {
+            $group: {
+                _id: "$user",
+                numOfReviews: { $sum: 1 },
+            }
+        },
+        { $sort: { numOfReviews: -1 } }
+    ]).then(function (reviews) {
+        res.json(reviews);
+    }, function (err) {
+        next(err);
+    });
+};
