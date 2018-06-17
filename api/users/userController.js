@@ -28,7 +28,6 @@ exports.get = function (req, res, next) {
 };
 
 exports.getOne = function (req, res, next) {
-    console.log("token :", req.headers.authorization);
     var user = req.userData;
     res.json(user);
 };
