@@ -8,7 +8,6 @@ require('mongoose').connect("mongodb://admin:admin123456@ds263740.mlab.com:63740
 require("dotenv").config();
 require('./middelware/appMiddelwares')(app);
 var api = require('./api/api');
-var port = process.env.PORT || 3000;
 
 app.use('/images/', express.static('images'));
 app.use('/api/', api);
@@ -25,5 +24,7 @@ app.use(function (err, req, res, next) {
 });
 
 
-app.listen(port);
+app.listen(process.env.PORT || 3000, function(){
+    console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+  });
 console.log('on port 3000');
