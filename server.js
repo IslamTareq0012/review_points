@@ -4,11 +4,11 @@
 var express = require('express');
 var app = express();
 var _ = require('lodash');
-require('mongoose').connect("mongodb://localhost/gp-database");
+require('mongoose').connect("mongodb://admin:admin123456@ds263740.mlab.com:63740/reviewpoints_db");
 require("dotenv").config();
 require('./middelware/appMiddelwares')(app);
 var api = require('./api/api');
-
+var port = process.env.PORT || 3000;
 
 app.use('/images/', express.static('images'));
 app.use('/api/', api);
@@ -25,5 +25,5 @@ app.use(function (err, req, res, next) {
 });
 
 
-app.listen(3000);
+app.listen(port);
 console.log('on port 3000');
