@@ -93,7 +93,7 @@ exports.signUp = function (req, res, next) {
 
     if (!img) {
         var newUser = req.body;
-        newUser.userImage = String(req.body.email) + "_avatar.png";
+        newUser.userImage = "_avatar.png";
         User.create(newUser)
             .then(function (user) {
                 const token = jwt.sign({ _id: user._id }, process.env.SECRET);
