@@ -1,0 +1,15 @@
+---
+application:
+  name: "review-points"
+  project: "review-points"
+  organization: "QoveryCommunity"
+databases:
+- type: "MONGODB"
+  name: "review-points-db"
+  version: "3.6"
+routers:
+- name: "main-review-points"
+  routes:
+  - application_name: "review-points"
+    paths:
+    - "/*"
